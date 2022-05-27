@@ -16,8 +16,8 @@ import meta.ping as ping
 BORDER_ROUTER_ADDRESS = "csworld52.cs.ucsb.edu"
 
 
-def run(video: str, duration: int, data_dump: str,
-        pcap_name: str) -> Result[str, str]:
+def run(video: str, duration: int, data_dump: str, pcap_name: str,
+        ping_name: str) -> Result[str, str]:
     """
     Example youtube traffic collection run
     :param video:
@@ -27,7 +27,7 @@ def run(video: str, duration: int, data_dump: str,
     :return:
     """
 
-    result = ping.start_collecting(BORDER_ROUTER_ADDRESS)
+    result = ping.start_collecting(ping_name, BORDER_ROUTER_ADDRESS)
     if isinstance(result, Failure):
         return result
     ping_pid = result.unwrap()
@@ -76,11 +76,12 @@ if __name__ == '__main__':
 
     os.mkdir(data_dump)
     pcap_name = os.path.join(data_dump, "test.pcap")
+    ping_name = os.path.join(data_dump, "ping.txt")
 
     fa_c = multiprocessing.Process(target=fastapic.run, args=(data_dump, ))
     fa_c.start()
     try:
-        result = run(video, duration, data_dump, pcap_name)
+        result = run(video, duration, data_dump, pcap_name, ping_name)
     except Exception:
         raise
     finally:
