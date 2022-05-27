@@ -17,4 +17,7 @@
 !extractor
 !extractor/youtube_flow_extractor.py
 
+!meta
+!meta/ping.py
+
 !example.py
