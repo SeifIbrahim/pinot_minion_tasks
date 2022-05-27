@@ -110,7 +110,7 @@ def watch(url: str, how_long: Optional[int] = 100,
         options.add_argument(f"--load-extension={STATSFORNERDS_PATH},{ADBLOCK_PATH}")
 
     # or press space part
-    options.add_argument("--autoplay-policy=no-user-gesture-required")
+    # options.add_argument("--autoplay-policy=no-user-gesture-required")
 
     driver = webdriver.Chrome(service=Service(), options=options)
     time.sleep(1)

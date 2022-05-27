@@ -6,7 +6,13 @@
 const quality_change_url = "http://localhost:34543/quality";
 const state_change_url = "http://localhost:34543/state";
 const stats_url = "http://localhost:34543/report";
+const meta_url = "http://localhost:34543/meta";
 const report_time = 250;
+
+const PLAYING_STATE = 1;
+
+let start_play_time;
+let started = false;
 
 function postReport(url, jsonData) {
     // this function sends json data to report server
@@ -27,6 +33,20 @@ function onStateChange(event) {
             new_state: event,
         }
     );
+
+    // report startup delay
+    if (event.data == PLAYING_STATE && !started) {
+        started = true;
+        let startup_delay = Date.now() - start_play_time;
+        postReport(
+            meta_url,
+            {
+                video_id_and_cpn: player.getStatsForNerds().video_id_and_cpn,
+                startup_delay: startup_delay,
+            }
+        );
+    }
+
 }
 
 function onPlaybackQualityChange(event) {
@@ -60,6 +80,10 @@ while (!document.getElementById("movie_player")) {
 
 // get the player
 let player = document.getElementById("movie_player");
+
+player.playVideo();
+
+start_play_time = Date.now();
 
 // register callbacks on state and quality changes
 player.addEventListener("onStateChange", onStateChange);

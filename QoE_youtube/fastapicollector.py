@@ -67,6 +67,16 @@ async def report(obj: dict) -> None:
     save_record(obj, "report")
 
 
+@app.post("/meta")
+async def meta(obj: dict) -> None:
+    """
+    One-time meta information report
+    :param obj:
+    :return:
+    """
+    save_record(obj, "meta")
+
+
 def run(dump_folder: str = ".", host: str = "0.0.0.0", port: int = 34543):
     global app, DUMP_FOLDER
     DUMP_FOLDER = dump_folder
