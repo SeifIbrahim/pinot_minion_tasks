@@ -1,7 +1,6 @@
 """
 Module that filters the youtube traffic flow and saves multiple pcaps
 """
-import os
 
 import pyshark
 from returns.result import Result, Success
@@ -19,18 +18,20 @@ def ends_with(text: str, end: str) -> bool:
     return text[-len(end):] == end
 
 
-def extract(filepath: str, dump_path: str = ".") -> Result[list, str]:
+def extract(filepath: str) -> Result[list, str]:
     """
     Function that extracts the packets that belongs to the youtube video view
     :param filepath: where pcap is
     :param dump_path: where to store resulting files
     :return: list of names of resulting files
     """
-    capture = pyshark.FileCapture(filepath, display_filter='tls.handshake.extension.type == 0')
+    capture = pyshark.FileCapture(
+        filepath, display_filter='tls.handshake.extension.type == 0')
 
     starts = []
     for packet in capture:
-        if "TLS" in packet and hasattr(packet.tls, "handshake_extensions_server_name"):
+        if "TLS" in packet and hasattr(packet.tls,
+                                       "handshake_extensions_server_name"):
             sni = packet.tls.handshake_extensions_server_name
             if ends_with(sni, ".googlevideo.com"):
                 starts.append((packet.ip.src, packet.tcp.srcport,
@@ -42,10 +43,13 @@ def extract(filepath: str, dump_path: str = ".") -> Result[list, str]:
                         f"ip.dst == {dst} && tcp.dstport == {dstport}) || " \
                         f"(ip.src == {dst} && tcp.srcport == {dstport} && " \
                         f"ip.dst == {src} && tcp.dstport == {srcport}) || " \
-                        f"(quic && udp.srcport == 443) || (quic && udp.dstport == 443)"
-        filename = os.path.join(dump_path, f"{src}_{srcport}_{dst}_{dstport}.pcap")
+                        f"(quic && udp.srcport == 443) || "\
+                        f"(quic && udp.dstport == 443)"
+        filename = f"{src}_{srcport}_{dst}_{dstport}.pcap"
         filenames.append(filename)
-        capture = pyshark.FileCapture(filepath, display_filter=tshark_filter, output_file=filename)
+        capture = pyshark.FileCapture(filepath,
+                                      display_filter=tshark_filter,
+                                      output_file=filename)
         capture.load_packets()
         capture.close()
 

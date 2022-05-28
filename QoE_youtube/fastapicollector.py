@@ -44,7 +44,7 @@ async def quality(obj: dict) -> None:
     :param obj:
     :return:
     """
-    save_record(obj, "event")
+    save_record(obj, "quality")
 
 
 @app.post("/state")
@@ -54,7 +54,7 @@ async def state(obj: dict) -> None:
     :param obj:
     :return:
     """
-    save_record(obj, "event")
+    save_record(obj, "state")
 
 
 @app.post("/report")

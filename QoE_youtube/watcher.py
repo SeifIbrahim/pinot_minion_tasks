@@ -4,6 +4,8 @@ Module responsible for starting and ending selenium based chrome and viewing the
 
 import time
 from typing import List, Optional
+import pathlib
+import os
 
 from pyvirtualdisplay import Display
 from returns.result import Result, Success
@@ -14,8 +16,9 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-STATSFORNERDS_PATH = r"QoE_youtube/extensions/chrome_extension"
-ADBLOCK_PATH = r"QoE_youtube/extensions/4.46.2_0.crx"
+YOUTUBE_DIR = pathlib.Path(__file__).parent.resolve()
+STATSFORNERDS_PATH = os.path.join(YOUTUBE_DIR, "extensions/chrome_extension")
+ADBLOCK_PATH = os.path.join(YOUTUBE_DIR, "extensions/4.46.2_0.crx")
 
 
 def extract_qualities(text: str) -> List[int]:
@@ -52,19 +55,22 @@ def find_closest(options: List[int], goal: int) -> int:
 
 
 def select_quality(driver: webdriver.Chrome, quality: int) -> None:
-    settings = driver.find_element(By.CLASS_NAME,
-                                   "ytp-settings-button")  # .find_elements_by_class_name("ytp-settings-button")
+    settings = driver.find_element(
+        By.CLASS_NAME, "ytp-settings-button"
+    )  # .find_elements_by_class_name("ytp-settings-button")
     settings.click()
     menu = driver.find_elements(By.CLASS_NAME, 'ytp-menuitem')
     menu[3].click()
     quality_menu = driver.find_element(By.CLASS_NAME, 'ytp-quality-menu')
     options = extract_qualities(quality_menu.text)
-    index_to_select = find_closest(options, quality) + 1  # Because we cutted first "go back to menu" option
+    # Because we cutted first "go back to menu" option
+    index_to_select = find_closest(options, quality) + 1
     menu = driver.find_elements(By.CLASS_NAME, 'ytp-menuitem')
     menu[index_to_select].click()
 
 
-def watch(url: str, how_long: Optional[int] = 100,
+def watch(url: str,
+          how_long: Optional[int] = 100,
           quality: Optional[int] = None) -> Result[str, str]:
     """
     Function that completes the task of:
@@ -94,7 +100,7 @@ def watch(url: str, how_long: Optional[int] = 100,
     Why didn't I done that all? Roman asked me to make simple short code for prepared people
     """
     # Display size is random popular screen size
-    display = Display(visible=False, size=(1920, 1080))
+    display = Display(visible=True, size=(1920, 1080))
     display.start()
 
     options = Options()
@@ -107,10 +113,15 @@ def watch(url: str, how_long: Optional[int] = 100,
         options.add_extension(ADBLOCK_PATH)
     else:
         # In case we want to load both extensions unpacked way
-        options.add_argument(f"--load-extension={STATSFORNERDS_PATH},{ADBLOCK_PATH}")
+        options.add_argument(
+            f"--load-extension={STATSFORNERDS_PATH},{ADBLOCK_PATH}")
 
-    # or press space part
+    # enable autoplay
     # options.add_argument("--autoplay-policy=no-user-gesture-required")
+
+    # disable autoplay so that we can capture startup delay
+    options.add_argument("--disable-features=PreloadMediaEngagementData,"
+                         " MediaEngagementBypassAutoplayPolicies")
 
     driver = webdriver.Chrome(service=Service(), options=options)
     time.sleep(1)
@@ -152,7 +163,9 @@ def watch(url: str, how_long: Optional[int] = 100,
         player_status = 1  # Suppose video playing now
         while player_status != 0:  # While not stopped - see docs
             time.sleep(2)  # Random 2s constant not to check to freq
-            player_status = driver.execute_script("return document.getElementById('movie_player').getPlayerState()")
+            player_status = driver.execute_script(
+                "return document.getElementById('movie_player').getPlayerState()"
+            )
         how = "End of video"
     else:
         time.sleep(how_long)

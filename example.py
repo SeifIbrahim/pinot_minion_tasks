@@ -16,14 +16,14 @@ import meta.ping as ping
 BORDER_ROUTER_ADDRESS = "csworld52.cs.ucsb.edu"
 
 
-def run(video: str, duration: int, data_dump: str, pcap_name: str,
+def run(video: str, duration: int, pcap_name: str,
         ping_name: str) -> Result[str, str]:
     """
     Example youtube traffic collection run
     :param video:
     :param duration:
-    :param data_dump:
     :param pcap_name:
+    :param ping_name:
     :return:
     """
 
@@ -53,7 +53,7 @@ def run(video: str, duration: int, data_dump: str, pcap_name: str,
     if isinstance(result, Failure):
         return result
 
-    result = utubee.extract(pcap_name, data_dump)
+    result = utubee.extract(pcap_name)
     if isinstance(result, Failure):
         return result
 
@@ -63,27 +63,43 @@ def run(video: str, duration: int, data_dump: str, pcap_name: str,
 if __name__ == '__main__':
     if len(sys.argv) != 4:
         print("Usage: python3 example.py <video> <duration> <data_dump>")
-        print(
-            "Executing with default values: python3 example.py https://www.youtube.com/watch?v=dQw4w9WgXcQ 10 tmp"
-        )
+        print("Executing with default values: python3 example.py"
+              " https://www.youtube.com/watch?v=dQw4w9WgXcQ 10 tmp")
         video = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
         duration = 10
-        data_dump = "tmp"
+        data_dump = "youtube_data"
     else:
         video = sys.argv[1]
         duration = int(sys.argv[2])
         data_dump = sys.argv[3]
 
-    os.mkdir(data_dump)
-    pcap_name = os.path.join(data_dump, "test.pcap")
-    ping_name = os.path.join(data_dump, "ping.txt")
+    video_id = video.split("=")[1]
 
-    fa_c = multiprocessing.Process(target=fastapic.run, args=(data_dump, ))
+    pcap_name = "raw_capture.pcap"
+    ping_name = "ping.txt"
+
+    # create the user data dump directory if it doesn't exist
+    if not os.path.exists(data_dump):
+        os.mkdir(data_dump)
+
+    # create a unique directory for the session
+    i = 0
+    session_folder = os.path.join(data_dump, f"{video_id}_{i}")
+    while os.path.exists(session_folder):
+        i += 1
+        session_folder = os.path.join(data_dump, f"{video_id}_{i}")
+    os.mkdir(session_folder)
+
+    os.chdir(session_folder)
+
+    fa_c = multiprocessing.Process(target=fastapic.run, args=(".", ))
     fa_c.start()
+
     try:
-        result = run(video, duration, data_dump, pcap_name, ping_name)
+        result = run(video, duration, pcap_name, ping_name)
     except Exception:
         raise
     finally:
         fa_c.terminate()
+
     print(result)

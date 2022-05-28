@@ -27,6 +27,7 @@ function onStateChange(event) {
     postReport(
         state_change_url,
         {
+            timestamp: Date.now(),
             video_id_and_cpn: player.getStatsForNerds().video_id_and_cpn,
             fraction: player.getVideoLoadedFraction(),
             current_time: player.getCurrentTime(),
@@ -35,12 +36,13 @@ function onStateChange(event) {
     );
 
     // report startup delay
-    if (event.data == PLAYING_STATE && !started) {
+    if (event == PLAYING_STATE && !started) {
         started = true;
         let startup_delay = Date.now() - start_play_time;
         postReport(
             meta_url,
             {
+                timestamp: Date.now(),
                 video_id_and_cpn: player.getStatsForNerds().video_id_and_cpn,
                 startup_delay: startup_delay,
             }
@@ -54,6 +56,7 @@ function onPlaybackQualityChange(event) {
     postReport(
         quality_change_url,
         {
+            timestamp: Date.now(),
             video_id_and_cpn: player.getStatsForNerds().video_id_and_cpn,
             fraction: player.getVideoLoadedFraction(),
             current_time: player.getCurrentTime(),
@@ -67,6 +70,7 @@ function sendStats() {
     let stats_for_nerds = player.getStatsForNerds();
     stats_for_nerds.playback_fraction = player.getVideoLoadedFraction();
     stats_for_nerds.current_time = player.getCurrentTime();
+    stats_for_nerds.timestamp = Date.now();
 
     postReport(stats_url, stats_for_nerds);
 }
@@ -81,13 +85,13 @@ while (!document.getElementById("movie_player")) {
 // get the player
 let player = document.getElementById("movie_player");
 
-player.playVideo();
-
-start_play_time = Date.now();
-
 // register callbacks on state and quality changes
 player.addEventListener("onStateChange", onStateChange);
 player.addEventListener("onPlaybackQualityChange", onPlaybackQualityChange);
+
+player.playVideo();
+
+start_play_time = Date.now();
 
 // report stats for nerds every X ms
 setInterval(sendStats, report_time);
