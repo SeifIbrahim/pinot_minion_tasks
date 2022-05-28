@@ -14,6 +14,13 @@ const PLAYING_STATE = 1;
 let start_play_time;
 let started = false;
 
+document.addEventListener("keyup",  event => {
+    if (event.code === "Space") {
+        console.log("Started video");
+        start_play_time = Date.now();
+    }
+});
+
 function postReport(url, jsonData) {
     // this function sends json data to report server
     let xhr = new XMLHttpRequest();
@@ -88,10 +95,6 @@ let player = document.getElementById("movie_player");
 // register callbacks on state and quality changes
 player.addEventListener("onStateChange", onStateChange);
 player.addEventListener("onPlaybackQualityChange", onPlaybackQualityChange);
-
-player.playVideo();
-
-start_play_time = Date.now();
 
 // report stats for nerds every X ms
 setInterval(sendStats, report_time);

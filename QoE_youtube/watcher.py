@@ -124,7 +124,8 @@ def watch(url: str,
                          " MediaEngagementBypassAutoplayPolicies")
 
     driver = webdriver.Chrome(service=Service(), options=options)
-    time.sleep(1)
+    # wait for adblock to finish installing
+    time.sleep(5)
     driver.get(url)
 
     # To make sure we stay on our page (make sure your ad-block extension does
@@ -157,7 +158,7 @@ def watch(url: str,
     if not (quality is None):
         select_quality(driver, quality)
 
-    # video.send_keys(Keys.SPACE)  # hits space for start if option not availible
+    video.send_keys(Keys.SPACE)  # hits space for start if option not availible
 
     if how_long is None:
         player_status = 1  # Suppose video playing now
