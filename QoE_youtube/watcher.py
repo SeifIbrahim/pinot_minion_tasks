@@ -100,7 +100,7 @@ def watch(url: str,
     Why didn't I done that all? Roman asked me to make simple short code for prepared people
     """
     # Display size is random popular screen size
-    display = Display(visible=True, size=(1920, 1080))
+    display = Display(visible=False, size=(1920, 1080))
     display.start()
 
     options = Options()
