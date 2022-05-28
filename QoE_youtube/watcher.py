@@ -158,7 +158,11 @@ def watch(url: str,
     if not (quality is None):
         select_quality(driver, quality)
 
-    video.send_keys(Keys.SPACE)  # hits space for start if option not availible
+    # hits f to fullscreen the video, and plays it...
+    video.send_keys("f")
+
+    # hits space for start if option not availible
+    # video.send_keys(Keys.SPACE)
 
     if how_long is None:
         player_status = 1  # Suppose video playing now

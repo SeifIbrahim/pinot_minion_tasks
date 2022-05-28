@@ -15,7 +15,8 @@ let start_play_time;
 let started = false;
 
 document.addEventListener("keyup",  event => {
-    if (event.code === "Space") {
+    // record the time when the user starts the video by pressing either f or space
+    if (event.keyCode === 70 || event.code === "Space") {
         console.log("Started video");
         start_play_time = Date.now();
     }

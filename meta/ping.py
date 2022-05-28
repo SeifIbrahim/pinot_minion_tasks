@@ -2,6 +2,8 @@ from returns.result import Result, Success, Failure
 from typing import Optional
 import subprocess
 import time
+import os
+import signal
 
 
 def start_collecting(dump_file: str, address: str) -> Result[int, str]:
@@ -27,17 +29,17 @@ def stop_collecting(pid: Optional[int] = None) -> Result[str, str]:
     """
     if pid is None:
         line = ["killall", "ping"]
+        proc = subprocess.Popen(line,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        out, err = proc.communicate()
+
+        if out != b"" or err != b"":
+            return Failure(f"out: {out}, err: {err}")
     else:
         line = ["kill", f"{pid}"]
-
-    proc = subprocess.Popen(line,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-    out, err = proc.communicate()
+        os.kill(pid, signal.SIGINT)
 
     time.sleep(2)  # for ping to finish file
-
-    if out != b"" or err != b"":
-        return Failure(f"out: {out}, err: {err}")
 
     return Success("ping stopped")
