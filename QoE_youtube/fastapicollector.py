@@ -1,4 +1,5 @@
 import os
+import json
 from typing import TextIO
 
 import uvicorn
@@ -19,7 +20,7 @@ file_descriptors = {}
 
 def create_file_ds(view_id: str) -> TextIO:
     global file_descriptors
-    file = open(f"{os.path.join(DUMP_FOLDER, view_id)}.txt", "a")
+    file = open(f"{os.path.join(DUMP_FOLDER, view_id)}.json", "a")
     file_descriptors[view_id] = file
     return file
 
@@ -31,10 +32,11 @@ def parse_descriptor(text: str) -> str:
 def save_record(obj: dict, code="report") -> None:
     global file_descriptors
     if 'video_id_and_cpn' in obj:
-        parsed_desc = parse_descriptor(obj['video_id_and_cpn'])
-        name = f"{code}_{parsed_desc}"
+        # parsed_desc = parse_descriptor(obj['video_id_and_cpn'])
+        # name = f"{code}_{parsed_desc}"
+        name = f"{code}"
         event_file = file_descriptors.get(name, create_file_ds(name))
-        print(obj, file=event_file, flush=True)
+        print(json.dumps(obj), file=event_file, flush=True)
 
 
 @app.post("/quality")
