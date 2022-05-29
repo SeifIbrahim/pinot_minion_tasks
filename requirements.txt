@@ -4,3 +4,4 @@ fastapi==0.78.0
 PyVirtualDisplay==3.0
 selenium==4.1.5
 pyshark==0.4.5
+scipy
