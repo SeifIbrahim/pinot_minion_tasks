@@ -1,6 +1,7 @@
 import sys
 if __name__ == '__main__':
     if len(sys.argv) != 4:
+        print(sys.argv)
         print("Usage: python3 example.py <video> <duration> <data_dump>")
         print("Executing with default values: python3 example.py"
               " https://www.youtube.com/watch?v=dQw4w9WgXcQ 10 youtube_data")
