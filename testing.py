@@ -12,3 +12,6 @@ if __name__ == '__main__':
         video = sys.argv[1]
         duration = int(sys.argv[2])
         data_dump = sys.argv[3]
+    print(video)
+    video_id = video.split("=")[1]
+    print(video_id)
