@@ -1,4 +1,5 @@
 import sys
+import os
 if __name__ == '__main__':
     if len(sys.argv) != 4:
         print(sys.argv)
@@ -17,3 +18,16 @@ if __name__ == '__main__':
     print(video)
     video_id = video.split("=")[1]
     print(video_id)
+    
+    if not os.path.exists(data_dump):
+        os.mkdir(data_dump)
+
+    # create a unique directory for the session
+    i = 0
+    session_folder = os.path.join(data_dump, f"{video_id}_{i}")
+    while os.path.exists(session_folder):
+        i += 1
+        session_folder = os.path.join(data_dump, f"{video_id}_{i}")
+    os.mkdir(session_folder)
+
+    os.chdir(session_folder)
