@@ -14,14 +14,6 @@ const PLAYING_STATE = 1;
 let start_play_time;
 let started = false;
 
-document.addEventListener("keyup",  event => {
-    // record the time when the user starts the video by pressing either f or space
-    if (event.keyCode === 70 || event.code === "Space") {
-        console.log("Started video");
-        start_play_time = Date.now();
-    }
-});
-
 function postReport(url, jsonData) {
     // this function sends json data to report server
     let xhr = new XMLHttpRequest();
@@ -86,9 +78,11 @@ function sendStats() {
 // wait until player is ready
 while (!document.getElementById("movie_player")) {
     (async () => {
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 10));
     })();
 }
+
+start_play_time = Date.now();
 
 // get the player
 let player = document.getElementById("movie_player");

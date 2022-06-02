@@ -119,7 +119,7 @@ def watch(url: str,
     # enable autoplay
     # options.add_argument("--autoplay-policy=no-user-gesture-required")
 
-    # disable autoplay so that we can capture startup delay
+    # disable autoplay so that we can fullscreen the video
     options.add_argument("--disable-features=PreloadMediaEngagementData,"
                          " MediaEngagementBypassAutoplayPolicies")
 
