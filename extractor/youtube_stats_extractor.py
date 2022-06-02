@@ -4,6 +4,9 @@ import re
 import statistics
 import scipy.stats
 from collections import deque
+import sys
+import os
+import glob
 
 WINDOW_SIZE = 2
 WINDOW_SHIFT = 1
@@ -132,16 +135,17 @@ def get_window_stats(data, window_start, extract_func):
     return get_window_stats
 
 
-def youtube_stats_extractor():
-    report_dir = "/home/seif/Documents/CS293N/project/pinot_minion_tasks/youtube_data/dQw4w9WgXcQ_0"
-    pcap_file = "169.231.178.179_35416_198.189.66.16_443.pcap"
-    pcap_path = f"{report_dir}/{pcap_file}"
+def youtube_stats_extractor(report_dir):
+    # pcap_file = "169.231.178.179_35416_198.189.66.16_443.pcap"
+    # pcap_path = f"{report_dir}/{pcap_file}"
+    pcap_path = glob.glob(f'{report_dir}/1*.pcap')[0]
+    print(pcap_path)
     state_path = f"{report_dir}/state.json"
     report_path = f"{report_dir}/report.json"
     ping_path = f"{report_dir}/ping.txt"
     meta_path = f"{report_dir}/meta.json"
 
-    src_ip = pcap_file.split('_')[0]
+    src_ip = os.path.basename(pcap_path).split('_')[0]
 
     video_start = 0
     with open(state_path, 'r') as f:
@@ -179,6 +183,7 @@ def youtube_stats_extractor():
             })
     upstream.sort(key=lambda packet: packet['timestamp'])
     downstream.sort(key=lambda packet: packet['timestamp'])
+    capture.close()
 
     # read last mile latency ping
     pings = []
@@ -233,8 +238,22 @@ def youtube_stats_extractor():
         'startup_delay': startup_delay / 1000,
     }
 
-    print(window_stats)
-    print(summary_stats)
+    return {'window': window_stats, 'summary': summary_stats}
 
 
-youtube_stats_extractor()
+if __name__ == '__main__':
+    if len(sys.argv) < 3:
+        print(f'Usage {sys.argv[0]} data_directory skip_extracted')
+        sys.exit(1)
+    data_dir = sys.argv[1]
+    data_dir, dirs, files = next(os.walk(data_dir))
+    for session_dir in dirs:
+        full_session_dir = os.path.join(data_dir, session_dir)
+        stats_output_file = os.path.join(data_dir, f'{session_dir}_stats.json')
+        if sys.argv[2] == 'true' and os.path.exists(stats_output_file):
+            print(f'Skipping Session: {session_dir}')
+            continue
+        print(f'Extracting Session: {session_dir}')
+        stats = youtube_stats_extractor(full_session_dir)
+        with open(stats_output_file, 'w') as f:
+            json.dump(stats, f)
