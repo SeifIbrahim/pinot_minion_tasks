@@ -8,7 +8,7 @@ if __name__ == '__main__':
         duration = 10
         data_dump = "youtube_data"
     else:
-        print(argv)
+        print(sys.argv)
         print("length is 4 and ok")
         video = sys.argv[1]
         duration = int(sys.argv[2])
