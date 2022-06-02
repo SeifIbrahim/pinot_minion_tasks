@@ -72,6 +72,8 @@ if __name__ == '__main__':
         video = sys.argv[1]
         duration = int(sys.argv[2])
         data_dump = sys.argv[3]
+    print(f'The file we are extracting is {video} with duration {duration} and location as {data_dump}')
+    
 
     video_id = video.split("=")[1]
 
