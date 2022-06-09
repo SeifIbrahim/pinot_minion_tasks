@@ -3,6 +3,7 @@
 !README.md
 !requirements.txt
 !installation.md
+!Hints.md
 
 !QoE_youtube
 !QoE_youtube/fastapicollector.py
@@ -11,7 +12,6 @@
 !QoE_youtube/extensions/chrome_extension
 !QoE_youtube/extensions/chrome_extension/*
 !QoE_youtube/extensions/4.46.2_0.crx
-
 !pcap
 !pcap/pcapcollector.py
 
@@ -19,7 +19,7 @@
 !extractor/youtube_flow_extractor.py
 !extractor/youtube_stats_extractor.py
 
-!meta
+!metas
 !meta/ping.py
 
 !example.py
