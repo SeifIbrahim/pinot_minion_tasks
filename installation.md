@@ -15,7 +15,7 @@
 * First switch to last mile latency branch 
   * cd pinot_minion_tasks && git checkout last_mile_latency
 * pip install -r pinot_minion_tasks/requirements.txt
-  ## Installing python 3.10
+  ## Installing python 3.10 
 * apt update &&  apt upgrade -y
 * sudo apt install software-properties-common -y
 * sudo add-apt-repository ppa:deadsnakes/ppa

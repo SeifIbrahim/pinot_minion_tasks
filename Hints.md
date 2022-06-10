@@ -31,6 +31,11 @@ to insert the required password. Also, since generating
 public keys for the PINOT nodes and using them for
 authentication was a pain in the neck(we are so lazy), we
 just set up our server in a way that it does not require
-public key for granting scp access. For this sake, we used the following commands:
+public key for granting scp access. For this sake, we used the following commands(we used rsync to avoid copying the existing data on our computer):
+
 '''sshpass -p "password" rsync -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -a --ignore-existing "data location on pinot" "the address of your machine(username@IP:location)"'''
+
+
+
+
 
