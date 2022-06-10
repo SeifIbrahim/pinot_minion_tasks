@@ -4,6 +4,8 @@
 !requirements.txt
 !installation.md
 !Hints.md
+!Running_instances.sh
+!Video_urls.txt
 
 !QoE_youtube
 !QoE_youtube/fastapicollector.py
