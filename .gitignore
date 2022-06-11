@@ -25,3 +25,6 @@
 !meta/ping.py
 
 !example.py
+
+!notebooks
+!notebooks/decision_tree.ipynb
